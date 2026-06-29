@@ -491,15 +491,14 @@
 
         // ── 毎フレーム処理 ──
         let lastTime = performance.now();
+        let smoothHeight = 0;
 
         viewer.scene.preRender.addEventListener(() => {
-          if (!walkMode) { lastTime = performance.now(); return; }
+          if (!walkMode) { lastTime = performance.now(); smoothHeight = 0; return; }
 
           const now = performance.now();
-          const dt = Math.min((now - lastTime) / 1000, 0.1); // 最大100ms
+          const dt = Math.min((now - lastTime) / 1000, 0.1);
           lastTime = now;
-
-          const moveDistance = WALK_SPEED * dt;
 
           let forward = 0, right = 0;
           if (walkKeys.w) forward += 1;
@@ -507,18 +506,41 @@
           if (walkKeys.a) right -= 1;
           if (walkKeys.d) right += 1;
 
-          if (forward !== 0) viewer.camera.moveForward(forward * moveDistance);
-          if (right !== 0) viewer.camera.moveRight(right * moveDistance);
-
-          // 地面追従
           const camPos = viewer.camera.positionCartographic;
-          const groundHeight = viewer.scene.globe.getHeight(camPos);
-          if (groundHeight !== undefined) {
-            const targetH = groundHeight + EYE_HEIGHT;
-            const curH = camPos.height;
-            const newH = curH + (targetH - curH) * Math.min(dt * 10, 1);
-            viewer.camera.position = Cesium.Cartesian3.fromRadians(camPos.longitude, camPos.latitude, newH);
+          const heading = viewer.camera.heading;
+
+          // 1. 先に移動先の水平位置を計算
+          let newLon = camPos.longitude;
+          let newLat = camPos.latitude;
+
+          if (forward !== 0 || right !== 0) {
+            const moveDist = WALK_SPEED * dt;
+            const mToRad = 1.0 / 6371000.0;
+            const cosLat = Math.cos(camPos.latitude) || 0.001;
+
+            let dLat = 0, dLon = 0;
+            if (forward !== 0) {
+              dLat += Math.cos(heading) * forward * moveDist * mToRad;
+              dLon += Math.sin(heading) * forward * moveDist * mToRad / cosLat;
+            }
+            if (right !== 0) {
+              dLat -= Math.sin(heading) * right * moveDist * mToRad;
+              dLon += Math.cos(heading) * right * moveDist * mToRad / cosLat;
+            }
+            newLon += dLon;
+            newLat += dLat;
           }
+
+          // 2. 移動先の地面の高さを取得
+          const groundHeight = viewer.scene.globe.getHeight(new Cesium.Cartographic(newLon, newLat));
+          const targetH = (groundHeight !== undefined ? groundHeight : (camPos.height - EYE_HEIGHT)) + EYE_HEIGHT;
+
+          // 3. 高さをスムーズに補間
+          if (smoothHeight === 0) smoothHeight = targetH;
+          smoothHeight += (targetH - smoothHeight) * Math.min(dt * 6, 1);
+
+          // 4. 計算済みの位置にカメラをセット
+          viewer.camera.position = Cesium.Cartesian3.fromRadians(newLon, newLat, smoothHeight);
         });
 
         // ── カメラ情報 ──
