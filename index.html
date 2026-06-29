@@ -404,7 +404,7 @@
             viewer.camera.flyTo({
               destination: Cesium.Cartesian3.fromRadians(targetCartographic.longitude, targetCartographic.latitude, h),
               orientation: { heading: viewer.camera.heading, pitch: 0, roll: 0 },
-              duration: 1.0,
+              duration: 2.5,
               complete: () => {
                 sscc.enableRotate = false;
                 sscc.enableZoom = false;
@@ -424,8 +424,8 @@
             const pos = viewer.camera.positionCartographic;
             const heading = viewer.camera.heading;
 
-            // 現在の向きの後方・上方に移動
-            const backDist = 0.002; // 約200m後方（度）
+            // 現在の向きの後方・上方に移動（約150m後方）
+            const backDist = 150.0 / 6371000.0; // メートル → ラジアン変換
             const lookAtLon = pos.longitude;
             const lookAtLat = pos.latitude;
             const newLon = lookAtLon - Math.sin(heading) * backDist;
@@ -434,36 +434,34 @@
             const groundHeight = viewer.scene.globe.getHeight(pos) || 0;
 
             viewer.camera.flyTo({
-              destination: Cesium.Cartesian3.fromRadians(newLon, newLat, groundHeight + 150),
+              destination: Cesium.Cartesian3.fromRadians(newLon, newLat, groundHeight + 120),
               orientation: {
                 heading: heading,
                 pitch: Cesium.Math.toRadians(-35),
                 roll: 0,
               },
-              duration: 1.2,
+              duration: 2.0,
             });
           }
         }
 
         walkBtn.addEventListener('click', toggleWalkMode);
 
-        // ── マウスイベント（ウォークモード用の見回し） ──
-        canvas.addEventListener('mousedown', (e) => {
-          if (!walkMode || e.button !== 0) return;
+        // ── マウスイベント（CesiumJS のイベントシステムで見回し） ──
+        const walkHandler = new Cesium.ScreenSpaceEventHandler(canvas);
+
+        walkHandler.setInputAction((click) => {
+          if (!walkMode) return;
           mouseDragging = true;
-          lastMouseX = e.clientX;
-          lastMouseY = e.clientY;
-          e.preventDefault();
-        });
+          lastMouseX = click.position.x;
+          lastMouseY = click.position.y;
+        }, Cesium.ScreenSpaceEventType.LEFT_DOWN);
 
-        window.addEventListener('mousemove', (e) => {
+        walkHandler.setInputAction((movement) => {
           if (!walkMode || !mouseDragging) return;
-          const dx = e.clientX - lastMouseX;
-          const dy = e.clientY - lastMouseY;
-          lastMouseX = e.clientX;
-          lastMouseY = e.clientY;
+          const dx = movement.endPosition.x - movement.startPosition.x;
+          const dy = movement.endPosition.y - movement.startPosition.y;
 
-          // 水平回転（heading）
           viewer.camera.setView({
             orientation: {
               heading: viewer.camera.heading - dx * LOOK_SENSITIVITY,
@@ -474,9 +472,11 @@
               roll: 0,
             },
           });
-        });
+        }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
 
-        window.addEventListener('mouseup', () => { mouseDragging = false; });
+        walkHandler.setInputAction(() => {
+          mouseDragging = false;
+        }, Cesium.ScreenSpaceEventType.LEFT_UP);
 
         // ── キーボード ──
         document.addEventListener('keydown', (e) => {
