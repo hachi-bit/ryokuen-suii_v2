@@ -352,7 +352,19 @@
 
         // ── ホームボタン ──
         document.getElementById('homeBtn').addEventListener('click', () => {
-          if (walkMode) toggleWalkMode();
+          // ウォークモード中なら状態だけリセット（アニメーションなし）
+          if (walkMode) {
+            walkMode = false;
+            walkBtn.classList.remove('active');
+            walkHint.style.display = 'none';
+            sscc.enableRotate = true;
+            sscc.enableZoom = true;
+            sscc.enableTilt = true;
+            sscc.enableTranslate = true;
+            sscc.enableLook = true;
+          }
+          // 実行中のアニメーションをキャンセル
+          if (flyAnim) { flyAnim.cancel = true; flyAnim = null; flyAnimating = false; }
           flyToHome(1.5);
         });
 
@@ -360,6 +372,7 @@
         //  ウォークモード
         // ============================================================
         let walkMode = false;
+        let flyAnimating = false;
         const walkKeys = { w: false, a: false, s: false, d: false };
         const walkBtn = document.getElementById('walkBtn');
         const walkHint = document.getElementById('walkHint');
@@ -394,6 +407,7 @@
           if (flyAnim) flyAnim.cancel = true;
           const anim = { cancel: false };
           flyAnim = anim;
+          flyAnimating = true;
 
           let hDiff = destOri.heading - sHead;
           if (hDiff > Math.PI) hDiff -= 2 * Math.PI;
@@ -418,7 +432,7 @@
             });
 
             if (rawT < 1.0) requestAnimationFrame(step);
-            else { flyAnim = null; if (onComplete) onComplete(); }
+            else { flyAnim = null; flyAnimating = false; if (onComplete) onComplete(); }
           }
           requestAnimationFrame(step);
         }
@@ -522,7 +536,7 @@
         let smoothHeight = 0;
 
         viewer.scene.preRender.addEventListener(() => {
-          if (!walkMode) { lastTime = performance.now(); smoothHeight = 0; return; }
+          if (!walkMode || flyAnimating) { lastTime = performance.now(); smoothHeight = 0; return; }
 
           const now = performance.now();
           const dt = Math.min((now - lastTime) / 1000, 0.1);
