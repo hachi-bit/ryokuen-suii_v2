@@ -381,14 +381,13 @@
           return hit || null;
         }
 
-        // ── 直線移動アニメーション ──
+        // ── 直線移動アニメーション（緯度経度高さベース） ──
         let flyAnim = null;
 
-        function linearFly(destCartesian, destOri, duration, onComplete) {
-          const startPos = viewer.camera.position.clone();
-          const startH = viewer.camera.heading;
-          const startP = viewer.camera.pitch;
-          const startR = viewer.camera.roll;
+        function linearFly(dLon, dLat, dH, destOri, duration, onComplete) {
+          const sp = viewer.camera.positionCartographic;
+          const sLon = sp.longitude, sLat = sp.latitude, sH = sp.height;
+          const sHead = viewer.camera.heading, sPitch = viewer.camera.pitch;
           const startTime = performance.now();
           const ms = duration * 1000;
 
@@ -396,27 +395,27 @@
           const anim = { cancel: false };
           flyAnim = anim;
 
+          let hDiff = destOri.heading - sHead;
+          if (hDiff > Math.PI) hDiff -= 2 * Math.PI;
+          if (hDiff < -Math.PI) hDiff += 2 * Math.PI;
+
           function step() {
             if (anim.cancel) return;
             const rawT = Math.min((performance.now() - startTime) / ms, 1.0);
-            // イーズイン・アウト
             const t = rawT < 0.5 ? 2 * rawT * rawT : 1 - Math.pow(-2 * rawT + 2, 2) / 2;
 
-            viewer.camera.position = new Cesium.Cartesian3(
-              Cesium.Math.lerp(startPos.x, destCartesian.x, t),
-              Cesium.Math.lerp(startPos.y, destCartesian.y, t),
-              Cesium.Math.lerp(startPos.z, destCartesian.z, t)
-            );
-
-            let hDiff = destOri.heading - startH;
-            if (hDiff > Math.PI) hDiff -= 2 * Math.PI;
-            if (hDiff < -Math.PI) hDiff += 2 * Math.PI;
-
-            viewer.camera.setView({ orientation: {
-              heading: startH + hDiff * t,
-              pitch: Cesium.Math.lerp(startP, destOri.pitch, t),
-              roll: Cesium.Math.lerp(startR, destOri.roll, t),
-            }});
+            viewer.camera.setView({
+              destination: Cesium.Cartesian3.fromRadians(
+                Cesium.Math.lerp(sLon, dLon, t),
+                Cesium.Math.lerp(sLat, dLat, t),
+                Cesium.Math.lerp(sH, dH, t)
+              ),
+              orientation: {
+                heading: sHead + hDiff * t,
+                pitch: Cesium.Math.lerp(sPitch, destOri.pitch, t),
+                roll: 0,
+              },
+            });
 
             if (rawT < 1.0) requestAnimationFrame(step);
             else { flyAnim = null; if (onComplete) onComplete(); }
@@ -431,17 +430,17 @@
 
           if (walkMode) {
             const groundHit = getLookAtGroundPosition();
-            let targetCartographic;
+            let tc;
             if (groundHit) {
-              targetCartographic = Cesium.Cartographic.fromCartesian(groundHit);
+              tc = Cesium.Cartographic.fromCartesian(groundHit);
             } else {
-              targetCartographic = viewer.camera.positionCartographic.clone();
+              tc = viewer.camera.positionCartographic.clone();
             }
-            const groundHeight = viewer.scene.globe.getHeight(targetCartographic);
-            const h = (groundHeight !== undefined ? groundHeight : 0) + EYE_HEIGHT;
+            const gh = viewer.scene.globe.getHeight(tc);
+            const h = (gh !== undefined ? gh : 0) + EYE_HEIGHT;
 
             linearFly(
-              Cesium.Cartesian3.fromRadians(targetCartographic.longitude, targetCartographic.latitude, h),
+              tc.longitude, tc.latitude, h,
               { heading: viewer.camera.heading, pitch: 0, roll: 0 },
               2.5,
               () => {
@@ -462,15 +461,14 @@
             const pos = viewer.camera.positionCartographic;
             const heading = viewer.camera.heading;
             const backDist = 150.0 / 6371000.0;
-            const newLon = pos.longitude - Math.sin(heading) * backDist;
-            const newLat = pos.latitude - Math.cos(heading) * backDist;
-            const groundHeight = viewer.scene.globe.getHeight(pos) || 0;
+            const nLon = pos.longitude - Math.sin(heading) * backDist;
+            const nLat = pos.latitude - Math.cos(heading) * backDist;
+            const gh = viewer.scene.globe.getHeight(pos) || 0;
 
             linearFly(
-              Cesium.Cartesian3.fromRadians(newLon, newLat, groundHeight + 120),
+              nLon, nLat, gh + 120,
               { heading: heading, pitch: Cesium.Math.toRadians(-35), roll: 0 },
-              2.0,
-              null
+              2.0, null
             );
           }
         }
