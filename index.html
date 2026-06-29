@@ -18,9 +18,7 @@
       color: #e2e8f0;
       border-radius: 12px;
       box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-      z-index: 1000;
-      user-select: none;
-      transition: all 0.3s ease;
+      z-index: 1000; user-select: none; transition: all 0.3s ease;
     }
     .panel.collapsed {
       width: 44px !important; height: 44px !important;
@@ -45,7 +43,6 @@
     #panel { top: 16px; left: 16px; width: 260px; padding: 16px; }
     #panel h1 { font-size: 15px; font-weight: 700; color: #38bdf8; margin-bottom: 2px; }
     #panel .subtitle { font-size: 10px; color: #94a3b8; margin-bottom: 12px; }
-
     .toggle-row {
       display: flex; align-items: center; justify-content: space-between;
       padding: 7px 0; border-top: 1px solid rgba(148,163,184,0.15);
@@ -64,7 +61,6 @@
     }
     .toggle-switch input:checked + .toggle-slider { background: #0ea5e9; }
     .toggle-switch input:checked + .toggle-slider::before { transform: translateX(18px); }
-
     #status {
       font-size: 10px; color: #64748b;
       margin-top: 8px; padding-top: 8px;
@@ -81,26 +77,17 @@
       font-size: 12px; font-weight: 700; color: #a78bfa; margin-bottom: 8px;
       font-family: 'Segoe UI', 'Hiragino Sans', sans-serif;
     }
-    .cam-row {
-      display: flex; justify-content: space-between; padding: 2px 0;
-      border-bottom: 1px solid rgba(148,163,184,0.08);
-    }
-    .cam-label { color: #94a3b8; }
-    .cam-value { color: #e2e8f0; font-weight: 600; }
+    .cam-row { display: flex; justify-content: space-between; padding: 2px 0; border-bottom: 1px solid rgba(148,163,184,0.08); }
+    .cam-label { color: #94a3b8; } .cam-value { color: #e2e8f0; font-weight: 600; }
     .copy-btn {
       margin-top: 8px; width: 100%; padding: 7px; font-size: 11px;
-      border: 1px solid #a78bfa; background: rgba(167,139,250,0.1);
-      color: #a78bfa; border-radius: 6px; cursor: pointer;
-      font-family: 'Segoe UI', 'Hiragino Sans', sans-serif;
+      border: 1px solid #a78bfa; background: rgba(167,139,250,0.1); color: #a78bfa;
+      border-radius: 6px; cursor: pointer; font-family: 'Segoe UI', 'Hiragino Sans', sans-serif;
     }
     .copy-btn:hover { background: rgba(167,139,250,0.2); }
     .copy-btn.copied { border-color: #4ade80; color: #4ade80; background: rgba(74,222,128,0.1); }
-    #cameraPanel .hint {
-      margin-top: 6px; font-size: 9px; color: #64748b;
-      font-family: 'Segoe UI', 'Hiragino Sans', sans-serif; line-height: 1.3;
-    }
+    #cameraPanel .hint { margin-top: 6px; font-size: 9px; color: #64748b; font-family: 'Segoe UI', 'Hiragino Sans', sans-serif; line-height: 1.3; }
 
-    /* ── 画面下部：スライダー ── */
     #sliderBar {
       position: absolute; bottom: 0; left: 0; right: 0;
       background: rgba(15, 23, 42, 0.92); backdrop-filter: blur(12px);
@@ -108,42 +95,35 @@
       display: flex; align-items: center; gap: 16px;
     }
     #sliderBar .slider-label { font-size: 12px; color: #94a3b8; white-space: nowrap; }
-    #sliderBar .slider-value {
-      font-size: 28px; font-weight: 800; color: #38bdf8;
-      min-width: 90px; text-align: right; line-height: 1;
-    }
+    #sliderBar .slider-value { font-size: 28px; font-weight: 800; color: #38bdf8; min-width: 90px; text-align: right; line-height: 1; }
     #sliderBar .slider-value .unit { font-size: 12px; font-weight: 400; color: #64748b; margin-left: 2px; }
     #sliderBar input[type="range"] {
       -webkit-appearance: none; flex: 1; height: 8px; border-radius: 4px;
-      background: linear-gradient(to right, #1e3a5f, #0ea5e9, #38bdf8);
-      outline: none; cursor: pointer;
+      background: linear-gradient(to right, #1e3a5f, #0ea5e9, #38bdf8); outline: none; cursor: pointer;
     }
     #sliderBar input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%;
-      background: #38bdf8; border: 3px solid #0f172a;
-      box-shadow: 0 0 10px rgba(56,189,248,0.5); cursor: pointer;
+      background: #38bdf8; border: 3px solid #0f172a; box-shadow: 0 0 10px rgba(56,189,248,0.5); cursor: pointer;
     }
     #rangeBtn {
-      background: rgba(148,163,184,0.15); border: 1px solid #334155;
-      color: #94a3b8; border-radius: 8px; padding: 4px 8px;
-      cursor: pointer; font-size: 14px; white-space: nowrap;
-      display: flex; align-items: center; gap: 2px; transition: all 0.15s;
+      background: rgba(148,163,184,0.15); border: 1px solid #334155; color: #94a3b8;
+      border-radius: 8px; padding: 4px 8px; cursor: pointer; font-size: 14px;
+      white-space: nowrap; display: flex; align-items: center; gap: 2px; transition: all 0.15s;
     }
     #rangeBtn:hover { border-color: #38bdf8; color: #38bdf8; background: rgba(56,189,248,0.08); }
     #rangeLabel { font-size: 11px; font-family: 'Segoe UI', sans-serif; }
 
-    /* ── 右下：アクションボタン ── */
     #actionButtons {
       position: absolute; bottom: 70px; right: 16px;
       display: flex; flex-direction: column; gap: 8px; z-index: 1000;
     }
     .action-btn {
-      width: 48px; height: 48px; border-radius: 24px;
-      border: 1px solid #334155;
-      background: rgba(15, 23, 42, 0.92); backdrop-filter: blur(12px);
-      color: #e2e8f0; font-size: 22px;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      width: 48px; height: 48px; border-radius: 24px; border: 1px solid #334155;
+      background: rgba(15,23,42,0.92); backdrop-filter: blur(12px);
+      color: #e2e8f0; font-size: 22px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
       transition: all 0.2s; box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+      position: relative;
     }
     .action-btn:hover { border-color: #38bdf8; background: rgba(56,189,248,0.1); }
     .action-btn.active { border-color: #4ade80; background: rgba(74,222,128,0.15); color: #4ade80; }
@@ -155,7 +135,6 @@
     }
     .action-btn:hover .tooltip { opacity: 1; }
 
-    /* ── ウォークモードのヒント ── */
     #walkHint {
       position: absolute; bottom: 70px; left: 50%; transform: translateX(-50%);
       background: rgba(74,222,128,0.15); border: 1px solid #4ade80;
@@ -183,30 +162,19 @@
 <body>
   <div id="cesiumContainer"></div>
 
-  <!-- コントロールパネル -->
   <div id="panel" class="panel">
     <div class="panel-icon">⚙️</div>
     <button class="panel-toggle" id="panelToggle">−</button>
     <div class="panel-body">
       <h1>簡易浸水シミュレーター</h1>
       <div class="subtitle">緑園都市 ─ PLATEAU 3D都市モデル</div>
-      <div class="toggle-row">
-        <span>水面を表示</span>
-        <label class="toggle-switch"><input type="checkbox" id="waterToggle" checked><span class="toggle-slider"></span></label>
-      </div>
-      <div class="toggle-row">
-        <span>建物モデルを表示</span>
-        <label class="toggle-switch"><input type="checkbox" id="buildingToggle" checked><span class="toggle-slider"></span></label>
-      </div>
-      <div class="toggle-row">
-        <span>建物の水没着色</span>
-        <label class="toggle-switch"><input type="checkbox" id="floodColorToggle" checked><span class="toggle-slider"></span></label>
-      </div>
+      <div class="toggle-row"><span>水面を表示</span><label class="toggle-switch"><input type="checkbox" id="waterToggle" checked><span class="toggle-slider"></span></label></div>
+      <div class="toggle-row"><span>建物モデルを表示</span><label class="toggle-switch"><input type="checkbox" id="buildingToggle" checked><span class="toggle-slider"></span></label></div>
+      <div class="toggle-row"><span>建物の水没着色</span><label class="toggle-switch"><input type="checkbox" id="floodColorToggle" checked><span class="toggle-slider"></span></label></div>
       <div id="status">読み込み中...</div>
     </div>
   </div>
 
-  <!-- カメラパネル（非表示） -->
   <div id="cameraPanel" class="panel" style="display:none;">
     <div class="panel-icon">📷</div>
     <button class="panel-toggle" id="cameraPanelToggle">−</button>
@@ -223,29 +191,18 @@
     </div>
   </div>
 
-  <!-- アクションボタン（右下） -->
   <div id="actionButtons">
-    <button class="action-btn" id="walkBtn" title="ウォークモード">
-      🚶
-      <span class="tooltip">ウォークモード</span>
-    </button>
-    <button class="action-btn" id="homeBtn" title="初期位置に戻る">
-      🏠
-      <span class="tooltip">初期位置に戻る</span>
-    </button>
+    <button class="action-btn" id="walkBtn"><span>🚶</span><span class="tooltip">ウォークモード</span></button>
+    <button class="action-btn" id="homeBtn"><span>🏠</span><span class="tooltip">初期位置に戻る</span></button>
   </div>
 
-  <!-- ウォークモードのヒント -->
-  <div id="walkHint">
-    🚶 ウォークモード：WASD で移動 ／ マウスドラッグで見回し ／ もう一度 🚶 で解除
-  </div>
+  <div id="walkHint">🚶 WASD 移動 ／ 左ドラッグ 見回し ／ 🚶ボタンで解除</div>
 
-  <!-- スライダー -->
   <div id="sliderBar">
     <div class="slider-label">海抜</div>
     <div class="slider-value"><span id="waterValue">25.0</span><span class="unit">m</span></div>
     <input type="range" id="waterSlider" min="0" max="100" value="25" step="0.1">
-    <button id="rangeBtn" title="スライダーの最大値を切り替え">📏<span id="rangeLabel">100</span></button>
+    <button id="rangeBtn">📏<span id="rangeLabel">100</span></button>
   </div>
 
   <div id="credit">
@@ -261,31 +218,20 @@
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.' +
       'eyJqdGkiOiJlNjk0MTM4NC1lMWI0LTQxNTgtYjcxZS01ZWJhMGJlMTE1MWQiLCJpZCI6MTQ5ODk3LCJpYXQiOjE3MTUxNTEyODZ9.' +
       '2aUmEQ2-fDsjf-XeC6-hZpwkgwLse3yXoXF4xTOvPAY';
-
     const TERRAIN_ASSET_ID = 2488101;
 
     const INITIAL_CAMERA = {
-      lon: 139.518853,
-      lat: 35.431628,
-      height: 500.1,
-      heading: 24.10,
-      pitch: -30.23,
-      roll: 0.00,
+      lon: 139.518853, lat: 35.431628, height: 500.1,
+      heading: 24.10, pitch: -30.23, roll: 0.00,
     };
 
     const DEFAULT_WATER_LEVEL = 25;
     const MAX_WATER_LEVEL = 300;
     const GEOID_HEIGHT = 37;
+    const EYE_HEIGHT = 1.7;
+    const WALK_SPEED = 15.0;
 
-    const EYE_HEIGHT = 1.7; // ウォークモードの目線高さ (m)
-    const WALK_SPEED = 15.0; // 歩行速度 (m/s)
-
-    const WATER_BOUNDS = {
-      west:  139.30,
-      south: 35.275,
-      east:  139.70,
-      north: 35.575,
-    };
+    const WATER_BOUNDS = { west: 139.30, south: 35.275, east: 139.70, north: 35.575 };
 
     const BUILDING_URLS = [
       'https://api.plateauview.mlit.go.jp/datacatalog/3dtiles/14116-bldg-lod1-texture-2024/tileset.json',
@@ -297,49 +243,37 @@
     //  メイン
     // ============================================================
     Cesium.Ion.defaultAccessToken = PLATEAU_ION_TOKEN;
-
     const statusEl = document.getElementById('status');
     function setStatus(html) { statusEl.innerHTML = html; }
-
     let currentWaterLevel = DEFAULT_WATER_LEVEL + GEOID_HEIGHT;
-    let floodColorEnabled = true;
 
     (async () => {
       try {
         setStatus('Viewerを初期化中...');
-
         const viewer = new Cesium.Viewer('cesiumContainer', {
           baseLayer: false,
           terrainProvider: await Cesium.CesiumTerrainProvider.fromIonAssetId(TERRAIN_ASSET_ID),
-          animation: false, timeline: false, homeButton: false,
-          geocoder: false, sceneModePicker: false, baseLayerPicker: false,
-          navigationHelpButton: false, fullscreenButton: false,
-          selectionIndicator: false, infoBox: false,
+          animation: false, timeline: false, homeButton: false, geocoder: false,
+          sceneModePicker: false, baseLayerPicker: false, navigationHelpButton: false,
+          fullscreenButton: false, selectionIndicator: false, infoBox: false,
         });
-
         viewer.scene.globe.depthTestAgainstTerrain = true;
-
         try {
-          viewer.imageryLayers.addImageryProvider(
-            new Cesium.UrlTemplateImageryProvider({
-              url: 'https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg',
-              maximumLevel: 18, credit: '地理院タイル',
-            })
-          );
+          viewer.imageryLayers.addImageryProvider(new Cesium.UrlTemplateImageryProvider({
+            url: 'https://cyberjapandata.gsi.go.jp/xyz/seamlessphoto/{z}/{x}/{y}.jpg',
+            maximumLevel: 18, credit: '地理院タイル',
+          }));
         } catch (e) {
-          viewer.imageryLayers.addImageryProvider(
-            new Cesium.OpenStreetMapImageryProvider({ url: 'https://tile.openstreetmap.org/' })
-          );
+          viewer.imageryLayers.addImageryProvider(new Cesium.OpenStreetMapImageryProvider({ url: 'https://tile.openstreetmap.org/' }));
         }
-
         viewer.scene.globe.enableLighting = true;
         setStatus('<span class="ok">✓</span> Viewer初期化完了');
 
-        // ── シェーダー（楕円体テスト方式） ──
+        // ── シェーダー ──
         const buildingShader = new Cesium.CustomShader({
           uniforms: {
             u_waterLevel: { type: Cesium.UniformType.FLOAT, value: DEFAULT_WATER_LEVEL + GEOID_HEIGHT },
-            u_colorOn:    { type: Cesium.UniformType.FLOAT, value: 1.0 },
+            u_colorOn: { type: Cesium.UniformType.FLOAT, value: 1.0 },
           },
           fragmentShaderText: `
             void fragmentMain(FragmentInput fsInput, inout czm_modelMaterial material) {
@@ -347,8 +281,7 @@
               vec3 p = fsInput.attributes.positionWC;
               float a_w = 6378137.0 + u_waterLevel;
               float b_w = 6356752.3 + u_waterLevel;
-              float test = (p.x * p.x + p.y * p.y) / (a_w * a_w)
-                         + (p.z * p.z) / (b_w * b_w);
+              float test = (p.x * p.x + p.y * p.y) / (a_w * a_w) + (p.z * p.z) / (b_w * b_w);
               if (test < 1.0) {
                 float depth = clamp((1.0 - test) * 637813.0, 0.0, 1.0);
                 material.diffuse = mix(material.diffuse, vec3(0.9, 0.1, 0.05), depth * 0.8);
@@ -362,30 +295,22 @@
         let loadedCount = 0;
         for (const url of BUILDING_URLS) {
           try {
-            setStatus(`建物データを読み込み中... (${loadedCount}/${BUILDING_URLS.length})`);
+            setStatus(`建物データ読み込み中... (${loadedCount}/${BUILDING_URLS.length})`);
             const ts = await Cesium.Cesium3DTileset.fromUrl(url);
             ts.customShader = buildingShader;
             viewer.scene.primitives.add(ts);
             tilesets.push(ts);
             loadedCount++;
-            setStatus(`<span class="ok">✓</span> 建物データ ${loadedCount}/${BUILDING_URLS.length} 読み込み完了`);
-          } catch (e) {
-            console.warn('建物データ読み込み失敗:', url, e.message);
-          }
+          } catch (e) { console.warn('読み込み失敗:', url, e.message); }
         }
+        if (tilesets.length > 0) setStatus(`<span class="ok">✓</span> 建物 ${tilesets.length}件 読み込み完了`);
 
-        // ── カメラ初期位置 ──
+        // ── カメラ ──
         function flyToHome(duration) {
           viewer.camera.flyTo({
-            destination: Cesium.Cartesian3.fromDegrees(
-              INITIAL_CAMERA.lon, INITIAL_CAMERA.lat, INITIAL_CAMERA.height
-            ),
-            orientation: {
-              heading: Cesium.Math.toRadians(INITIAL_CAMERA.heading),
-              pitch:   Cesium.Math.toRadians(INITIAL_CAMERA.pitch),
-              roll:    Cesium.Math.toRadians(INITIAL_CAMERA.roll),
-            },
-            duration: duration,
+            destination: Cesium.Cartesian3.fromDegrees(INITIAL_CAMERA.lon, INITIAL_CAMERA.lat, INITIAL_CAMERA.height),
+            orientation: { heading: Cesium.Math.toRadians(INITIAL_CAMERA.heading), pitch: Cesium.Math.toRadians(INITIAL_CAMERA.pitch), roll: 0 },
+            duration,
           });
         }
         flyToHome(2);
@@ -393,20 +318,16 @@
         // ── 水面 ──
         const waterEntity = viewer.entities.add({
           rectangle: {
-            coordinates: Cesium.Rectangle.fromDegrees(
-              WATER_BOUNDS.west, WATER_BOUNDS.south,
-              WATER_BOUNDS.east, WATER_BOUNDS.north
-            ),
+            coordinates: Cesium.Rectangle.fromDegrees(WATER_BOUNDS.west, WATER_BOUNDS.south, WATER_BOUNDS.east, WATER_BOUNDS.north),
             height: new Cesium.CallbackProperty(() => currentWaterLevel, false),
             material: new Cesium.Color(0.1, 0.3, 0.8, 0.3),
             granularity: Cesium.Math.toRadians(0.005),
           },
         });
 
-        // ── UI：水位スライダー ──
+        // ── 水位スライダー ──
         const slider = document.getElementById('waterSlider');
         const valueDisplay = document.getElementById('waterValue');
-
         function updateWaterLevel(level) {
           currentWaterLevel = level + GEOID_HEIGHT;
           valueDisplay.textContent = level.toFixed(1);
@@ -414,46 +335,51 @@
         }
         slider.value = DEFAULT_WATER_LEVEL;
         updateWaterLevel(DEFAULT_WATER_LEVEL);
-
         slider.addEventListener('input', (e) => updateWaterLevel(parseFloat(e.target.value)));
 
-        document.getElementById('waterToggle').addEventListener('change', (e) => {
-          waterEntity.show = e.target.checked;
-        });
-        document.getElementById('buildingToggle').addEventListener('change', (e) => {
-          tilesets.forEach(ts => ts.show = e.target.checked);
-        });
-        document.getElementById('floodColorToggle').addEventListener('change', (e) => {
-          floodColorEnabled = e.target.checked;
-          buildingShader.setUniform('u_colorOn', floodColorEnabled ? 1.0 : 0.0);
-        });
+        document.getElementById('waterToggle').addEventListener('change', (e) => { waterEntity.show = e.target.checked; });
+        document.getElementById('buildingToggle').addEventListener('change', (e) => { tilesets.forEach(ts => ts.show = e.target.checked); });
+        document.getElementById('floodColorToggle').addEventListener('change', (e) => { buildingShader.setUniform('u_colorOn', e.target.checked ? 1.0 : 0.0); });
 
-        // レンジ切り替え
         const ranges = [100, 200, 300];
         let rangeIndex = 0;
         document.getElementById('rangeBtn').addEventListener('click', () => {
           rangeIndex = (rangeIndex + 1) % ranges.length;
-          const newMax = ranges[rangeIndex];
-          slider.max = newMax;
-          document.getElementById('rangeLabel').textContent = newMax;
-          if (parseFloat(slider.value) > newMax) {
-            slider.value = newMax;
-            updateWaterLevel(newMax);
-          }
+          slider.max = ranges[rangeIndex];
+          document.getElementById('rangeLabel').textContent = ranges[rangeIndex];
+          if (parseFloat(slider.value) > ranges[rangeIndex]) { slider.value = ranges[rangeIndex]; updateWaterLevel(ranges[rangeIndex]); }
         });
 
         // ── ホームボタン ──
         document.getElementById('homeBtn').addEventListener('click', () => {
-          if (walkMode) toggleWalkMode(); // ウォークモード解除
+          if (walkMode) toggleWalkMode();
           flyToHome(1.5);
         });
 
-        // ── ウォークモード ──
+        // ============================================================
+        //  ウォークモード
+        // ============================================================
         let walkMode = false;
         const walkKeys = { w: false, a: false, s: false, d: false };
         const walkBtn = document.getElementById('walkBtn');
         const walkHint = document.getElementById('walkHint');
         const sscc = viewer.scene.screenSpaceCameraController;
+        const canvas = viewer.scene.canvas;
+
+        // マウス見回し用
+        let mouseDragging = false;
+        let lastMouseX = 0, lastMouseY = 0;
+        const LOOK_SENSITIVITY = 0.003;
+
+        // カメラの視線の先の地面を取得
+        function getLookAtGroundPosition() {
+          const ray = viewer.camera.getPickRay(new Cesium.Cartesian2(
+            canvas.clientWidth / 2, canvas.clientHeight / 2
+          ));
+          if (!ray) return null;
+          const hit = viewer.scene.globe.pick(ray, viewer.scene);
+          return hit || null;
+        }
 
         function toggleWalkMode() {
           walkMode = !walkMode;
@@ -461,41 +387,98 @@
           walkHint.style.display = walkMode ? 'block' : 'none';
 
           if (walkMode) {
-            // 現在のカメラ位置の地面に降りる
-            const camPos = viewer.camera.positionCartographic;
-            const groundHeight = viewer.scene.globe.getHeight(camPos);
+            // ── ウォークモード開始：視線の先の地面に着地 ──
+            const groundHit = getLookAtGroundPosition();
+            let targetCartographic;
+
+            if (groundHit) {
+              targetCartographic = Cesium.Cartographic.fromCartesian(groundHit);
+            } else {
+              // 視線が地面に当たらなかった場合はカメラ直下
+              targetCartographic = viewer.camera.positionCartographic.clone();
+            }
+
+            const groundHeight = viewer.scene.globe.getHeight(targetCartographic);
             const h = (groundHeight !== undefined ? groundHeight : 0) + EYE_HEIGHT;
 
             viewer.camera.flyTo({
-              destination: Cesium.Cartesian3.fromRadians(camPos.longitude, camPos.latitude, h),
-              orientation: {
-                heading: viewer.camera.heading,
-                pitch: 0,
-                roll: 0,
-              },
-              duration: 0.8,
+              destination: Cesium.Cartesian3.fromRadians(targetCartographic.longitude, targetCartographic.latitude, h),
+              orientation: { heading: viewer.camera.heading, pitch: 0, roll: 0 },
+              duration: 1.0,
               complete: () => {
-                // デフォルトの操作を制限
                 sscc.enableRotate = false;
                 sscc.enableZoom = false;
                 sscc.enableTilt = false;
                 sscc.enableTranslate = false;
-                sscc.enableLook = true; // マウスでの見回しは有効
+                sscc.enableLook = false; // 自前で処理する
               },
             });
           } else {
-            // 通常モードに復帰
+            // ── ウォークモード解除：後ずさりして見下ろし ──
             sscc.enableRotate = true;
             sscc.enableZoom = true;
             sscc.enableTilt = true;
             sscc.enableTranslate = true;
             sscc.enableLook = true;
+
+            const pos = viewer.camera.positionCartographic;
+            const heading = viewer.camera.heading;
+
+            // 現在の向きの後方・上方に移動
+            const backDist = 0.002; // 約200m後方（度）
+            const lookAtLon = pos.longitude;
+            const lookAtLat = pos.latitude;
+            const newLon = lookAtLon - Math.sin(heading) * backDist;
+            const newLat = lookAtLat - Math.cos(heading) * backDist;
+
+            const groundHeight = viewer.scene.globe.getHeight(pos) || 0;
+
+            viewer.camera.flyTo({
+              destination: Cesium.Cartesian3.fromRadians(newLon, newLat, groundHeight + 150),
+              orientation: {
+                heading: heading,
+                pitch: Cesium.Math.toRadians(-35),
+                roll: 0,
+              },
+              duration: 1.2,
+            });
           }
         }
 
         walkBtn.addEventListener('click', toggleWalkMode);
 
-        // キー入力
+        // ── マウスイベント（ウォークモード用の見回し） ──
+        canvas.addEventListener('mousedown', (e) => {
+          if (!walkMode || e.button !== 0) return;
+          mouseDragging = true;
+          lastMouseX = e.clientX;
+          lastMouseY = e.clientY;
+          e.preventDefault();
+        });
+
+        window.addEventListener('mousemove', (e) => {
+          if (!walkMode || !mouseDragging) return;
+          const dx = e.clientX - lastMouseX;
+          const dy = e.clientY - lastMouseY;
+          lastMouseX = e.clientX;
+          lastMouseY = e.clientY;
+
+          // 水平回転（heading）
+          viewer.camera.setView({
+            orientation: {
+              heading: viewer.camera.heading - dx * LOOK_SENSITIVITY,
+              pitch: Math.max(
+                Cesium.Math.toRadians(-80),
+                Math.min(Cesium.Math.toRadians(60), viewer.camera.pitch - dy * LOOK_SENSITIVITY)
+              ),
+              roll: 0,
+            },
+          });
+        });
+
+        window.addEventListener('mouseup', () => { mouseDragging = false; });
+
+        // ── キーボード ──
         document.addEventListener('keydown', (e) => {
           if (!walkMode) return;
           const key = e.key.toLowerCase();
@@ -506,133 +489,52 @@
           if (key in walkKeys) walkKeys[key] = false;
         });
 
-        // 毎フレームの移動処理
+        // ── 毎フレーム処理 ──
         let lastTime = performance.now();
 
         viewer.scene.preRender.addEventListener(() => {
           if (!walkMode) { lastTime = performance.now(); return; }
 
           const now = performance.now();
-          const dt = (now - lastTime) / 1000;
+          const dt = Math.min((now - lastTime) / 1000, 0.1); // 最大100ms
           lastTime = now;
 
-          // 移動方向を計算
+          const moveDistance = WALK_SPEED * dt;
+
           let forward = 0, right = 0;
           if (walkKeys.w) forward += 1;
           if (walkKeys.s) forward -= 1;
           if (walkKeys.a) right -= 1;
           if (walkKeys.d) right += 1;
 
-          if (forward === 0 && right === 0 && dt < 0.5) {
-            // 移動なしでも地面追従は行う
-          }
+          if (forward !== 0) viewer.camera.moveForward(forward * moveDistance);
+          if (right !== 0) viewer.camera.moveRight(right * moveDistance);
 
-          const moveDistance = WALK_SPEED * dt;
-
-          if (forward !== 0 || right !== 0) {
-            const heading = viewer.camera.heading;
-
-            // 前後方向（水平のみ）
-            if (forward !== 0) {
-              viewer.camera.moveForward(forward * moveDistance);
-            }
-            // 左右方向
-            if (right !== 0) {
-              viewer.camera.moveRight(right * moveDistance);
-            }
-          }
-
-          // 地面に追従（沈まないようにする）
+          // 地面追従
           const camPos = viewer.camera.positionCartographic;
           const groundHeight = viewer.scene.globe.getHeight(camPos);
           if (groundHeight !== undefined) {
-            const targetHeight = groundHeight + EYE_HEIGHT;
-            const currentHeight = camPos.height;
-            // スムーズに地面に追従
-            const newHeight = currentHeight + (targetHeight - currentHeight) * Math.min(dt * 10, 1);
-            viewer.camera.position = Cesium.Cartesian3.fromRadians(
-              camPos.longitude, camPos.latitude, newHeight
-            );
-          }
-
-          // ピッチを制限（真上・真下を向きすぎないように）
-          const pitch = viewer.camera.pitch;
-          if (pitch > Cesium.Math.toRadians(60)) {
-            viewer.camera.setView({
-              orientation: {
-                heading: viewer.camera.heading,
-                pitch: Cesium.Math.toRadians(60),
-                roll: 0,
-              },
-            });
-          } else if (pitch < Cesium.Math.toRadians(-60)) {
-            viewer.camera.setView({
-              orientation: {
-                heading: viewer.camera.heading,
-                pitch: Cesium.Math.toRadians(-60),
-                roll: 0,
-              },
-            });
+            const targetH = groundHeight + EYE_HEIGHT;
+            const curH = camPos.height;
+            const newH = curH + (targetH - curH) * Math.min(dt * 10, 1);
+            viewer.camera.position = Cesium.Cartesian3.fromRadians(camPos.longitude, camPos.latitude, newH);
           }
         });
 
         // ── カメラ情報 ──
-        const camEls = {
-          lon: document.getElementById('camLon'), lat: document.getElementById('camLat'),
-          alt: document.getElementById('camAlt'), head: document.getElementById('camHead'),
-          pitch: document.getElementById('camPitch'), roll: document.getElementById('camRoll'),
-        };
-        function getCameraInfo() {
-          const pos = viewer.camera.positionCartographic;
-          return {
-            lon: Cesium.Math.toDegrees(pos.longitude), lat: Cesium.Math.toDegrees(pos.latitude),
-            height: pos.height,
-            heading: Cesium.Math.toDegrees(viewer.camera.heading),
-            pitch: Cesium.Math.toDegrees(viewer.camera.pitch),
-            roll: Cesium.Math.toDegrees(viewer.camera.roll),
-          };
-        }
-        viewer.camera.changed.addEventListener(() => {
-          const i = getCameraInfo();
-          camEls.lon.textContent = i.lon.toFixed(6); camEls.lat.textContent = i.lat.toFixed(6);
-          camEls.alt.textContent = i.height.toFixed(1); camEls.head.textContent = i.heading.toFixed(2);
-          camEls.pitch.textContent = i.pitch.toFixed(2); camEls.roll.textContent = i.roll.toFixed(2);
-        });
+        const camEls = { lon: document.getElementById('camLon'), lat: document.getElementById('camLat'), alt: document.getElementById('camAlt'), head: document.getElementById('camHead'), pitch: document.getElementById('camPitch'), roll: document.getElementById('camRoll') };
+        function getCameraInfo() { const p = viewer.camera.positionCartographic; return { lon: Cesium.Math.toDegrees(p.longitude), lat: Cesium.Math.toDegrees(p.latitude), height: p.height, heading: Cesium.Math.toDegrees(viewer.camera.heading), pitch: Cesium.Math.toDegrees(viewer.camera.pitch), roll: Cesium.Math.toDegrees(viewer.camera.roll) }; }
+        viewer.camera.changed.addEventListener(() => { const i = getCameraInfo(); camEls.lon.textContent=i.lon.toFixed(6); camEls.lat.textContent=i.lat.toFixed(6); camEls.alt.textContent=i.height.toFixed(1); camEls.head.textContent=i.heading.toFixed(2); camEls.pitch.textContent=i.pitch.toFixed(2); camEls.roll.textContent=i.roll.toFixed(2); });
         viewer.camera.percentageChanged = 0.001;
-
-        document.getElementById('copyBtn').addEventListener('click', () => {
-          const i = getCameraInfo();
-          const code = `const INITIAL_CAMERA = {\n  lon: ${i.lon.toFixed(6)},\n  lat: ${i.lat.toFixed(6)},\n  height: ${i.height.toFixed(1)},\n  heading: ${i.heading.toFixed(2)},\n  pitch: ${i.pitch.toFixed(2)},\n  roll: ${i.roll.toFixed(2)},\n};`;
-          navigator.clipboard.writeText(code).then(() => {
-            const btn = document.getElementById('copyBtn');
-            btn.textContent = '✅ コピーしました！';
-            btn.classList.add('copied');
-            setTimeout(() => { btn.textContent = '📋 初期位置コードをコピー'; btn.classList.remove('copied'); }, 2000);
-          });
-        });
+        document.getElementById('copyBtn').addEventListener('click', () => { const i = getCameraInfo(); const code=`const INITIAL_CAMERA = {\n  lon: ${i.lon.toFixed(6)},\n  lat: ${i.lat.toFixed(6)},\n  height: ${i.height.toFixed(1)},\n  heading: ${i.heading.toFixed(2)},\n  pitch: ${i.pitch.toFixed(2)},\n  roll: ${i.roll.toFixed(2)},\n};`; navigator.clipboard.writeText(code).then(()=>{ const b=document.getElementById('copyBtn'); b.textContent='✅ コピーしました！'; b.classList.add('copied'); setTimeout(()=>{b.textContent='📋 初期位置コードをコピー';b.classList.remove('copied');},2000); }); });
 
         // ── パネル折りたたみ ──
-        function setupToggle(panelId, toggleId) {
-          const p = document.getElementById(panelId);
-          const t = document.getElementById(toggleId);
-          t.addEventListener('click', (e) => {
-            e.stopPropagation();
-            p.classList.toggle('collapsed');
-            t.textContent = p.classList.contains('collapsed') ? '+' : '−';
-          });
-          p.addEventListener('click', () => {
-            if (p.classList.contains('collapsed')) { p.classList.remove('collapsed'); t.textContent = '−'; }
-          });
-        }
-        setupToggle('panel', 'panelToggle');
-        setupToggle('cameraPanel', 'cameraPanelToggle');
+        function setupToggle(pid, tid) { const p=document.getElementById(pid), t=document.getElementById(tid); t.addEventListener('click',(e)=>{e.stopPropagation();p.classList.toggle('collapsed');t.textContent=p.classList.contains('collapsed')?'+':'−';}); p.addEventListener('click',()=>{if(p.classList.contains('collapsed')){p.classList.remove('collapsed');t.textContent='−';}}); }
+        setupToggle('panel','panelToggle');
+        setupToggle('cameraPanel','cameraPanelToggle');
+        if(tilesets.length>0) setStatus('<span class="ok">✓</span> 準備完了');
 
-        if (tilesets.length > 0) { setStatus('<span class="ok">✓</span> 準備完了'); }
-
-      } catch (err) {
-        console.error(err);
-        setStatus(`<span class="err">✗ エラー:</span> ${err.message}`);
-      }
+      } catch(err) { console.error(err); setStatus(`<span class="err">✗ エラー:</span> ${err.message}`); }
     })();
   </script>
 </body>
