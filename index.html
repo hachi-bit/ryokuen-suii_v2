@@ -135,13 +135,14 @@
     }
     .action-btn:hover .tooltip { opacity: 1; }
 
-    #walkHint {
+    #walkHint, #pinHint {
       position: absolute; bottom: 70px; left: 50%; transform: translateX(-50%);
-      background: rgba(74,222,128,0.15); border: 1px solid #4ade80;
-      color: #4ade80; padding: 8px 16px; border-radius: 8px;
+      padding: 8px 16px; border-radius: 8px;
       font-size: 12px; z-index: 1000; display: none; text-align: center;
       backdrop-filter: blur(12px);
     }
+    #walkHint { background: rgba(74,222,128,0.15); border: 1px solid #4ade80; color: #4ade80; }
+    #pinHint { background: rgba(251,191,36,0.15); border: 1px solid #fbbf24; color: #fbbf24; }
 
     #credit {
       position: absolute; bottom: 60px; left: 8px;
@@ -201,10 +202,12 @@
 
   <div id="actionButtons">
     <button class="action-btn" id="walkBtn"><span>🚶</span><span class="tooltip">ウォークモード</span></button>
+    <button class="action-btn" id="pinBtn"><span>📌</span><span class="tooltip">位置特定モード</span></button>
     <button class="action-btn" id="homeBtn"><span>🏠</span><span class="tooltip">初期位置に戻る</span></button>
   </div>
 
   <div id="walkHint">🚶 WASD 移動 ／ 左ドラッグ 見回し ／ 🚶ボタンで解除</div>
+  <div id="pinHint">📌 位置特定モード：クリックで座標をコピー ／ 📌ボタンで解除</div>
 
   <div id="sliderBar">
     <div class="slider-label">海抜</div>
@@ -416,12 +419,16 @@
           console.log('GeoJSON読み込みスキップ:', e.message);
         }
 
-        // ── クリックでランドマーク用の座標をコピー ──
-        const debugHandler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
-        debugHandler.setInputAction((click) => {
-          if (walkMode) return;
+        // ── 位置特定モード ──
+        let pinMode = false;
+        let prePinCamera = null; // モード開始前のカメラ位置を保存
+        const pinBtn = document.getElementById('pinBtn');
+        const pinHint = document.getElementById('pinHint');
 
-          // クリック位置の緯度経度を取得
+        const pinHandler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+        pinHandler.setInputAction((click) => {
+          if (!pinMode) return;
+
           const ray = viewer.camera.getPickRay(click.position);
           if (!ray) return;
           const cartesian = viewer.scene.globe.pick(ray, viewer.scene);
@@ -431,31 +438,69 @@
           const lon = Cesium.Math.toDegrees(carto.longitude).toFixed(6);
           const lat = Cesium.Math.toDegrees(carto.latitude).toFixed(6);
 
-          // 建物の属性も取れたら表示
-          let buildingInfo = '';
-          const picked = viewer.scene.pick(click.position);
-          if (Cesium.defined(picked) && picked instanceof Cesium.Cesium3DTileFeature) {
-            const height = picked.getProperty('bldg:measuredHeight');
-            const city = picked.getProperty('uro:BuildingIDAttribute_uro:city');
-            if (height) buildingInfo += `\n建物高さ: ${height}m`;
-            if (city) buildingInfo += `\n所在: ${city}`;
-          }
+          const code = `{ "file": "", "nameKey": "名称", "color": "#e74c3c" }`;
+          const coordText = `経度: ${lon}, 緯度: ${lat}`;
 
-          // ランドマーク用のコードを生成
-          const code = `{ name: 'ここに名前', lon: ${lon}, lat: ${lat} },`;
-
-          // コピー
-          navigator.clipboard.writeText(code).then(() => {
-            console.log('コピー済み:', code);
+          navigator.clipboard.writeText(`${lon}, ${lat}`).then(() => {
+            console.log('座標コピー済み:', lon, lat);
           });
 
-          // 画面に表示
-          alert(
-            `📍 座標をコピーしました！\n\n` +
-            `経度: ${lon}\n緯度: ${lat}${buildingInfo}\n\n` +
-            `【コピー済み（LANDMARKSに貼り付けてね）】\n${code}`
-          );
+          alert(`📌 座標をコピーしました！\n\n${coordText}`);
         }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+        function togglePinMode() {
+          if (walkMode) return; // ウォーク中は使えない
+
+          pinMode = !pinMode;
+          pinBtn.classList.toggle('active', pinMode);
+          pinHint.style.display = pinMode ? 'block' : 'none';
+
+          if (pinMode) {
+            // 現在のカメラ位置を保存
+            const pos = viewer.camera.positionCartographic;
+            prePinCamera = {
+              lon: pos.longitude,
+              lat: pos.latitude,
+              height: pos.height,
+              heading: viewer.camera.heading,
+              pitch: viewer.camera.pitch,
+            };
+
+            // 真上から見下ろすビューに切り替え
+            viewer.camera.setView({
+              destination: Cesium.Cartesian3.fromRadians(pos.longitude, pos.latitude, Math.max(pos.height, 800)),
+              orientation: {
+                heading: 0,
+                pitch: Cesium.Math.toRadians(-90), // 真下を向く
+                roll: 0,
+              },
+            });
+
+            // 回転とチルトを制限（真上固定）
+            sscc.enableTilt = false;
+            sscc.enableRotate = false;
+          } else {
+            // 元のカメラ位置に戻す
+            sscc.enableTilt = true;
+            sscc.enableRotate = true;
+
+            if (prePinCamera) {
+              viewer.camera.setView({
+                destination: Cesium.Cartesian3.fromRadians(
+                  prePinCamera.lon, prePinCamera.lat, prePinCamera.height
+                ),
+                orientation: {
+                  heading: prePinCamera.heading,
+                  pitch: prePinCamera.pitch,
+                  roll: 0,
+                },
+              });
+              prePinCamera = null;
+            }
+          }
+        }
+
+        pinBtn.addEventListener('click', togglePinMode);
 
         // ── 水位スライダー ──
         const slider = document.getElementById('waterSlider');
@@ -498,6 +543,13 @@
             sscc.enableTilt = true;
             sscc.enableTranslate = true;
             sscc.enableLook = true;
+          }
+          if (pinMode) {
+            pinMode = false;
+            pinBtn.classList.remove('active');
+            pinHint.style.display = 'none';
+            sscc.enableTilt = true;
+            sscc.enableRotate = true;
           }
           // 実行中のアニメーションをキャンセル
           if (flyAnim) { flyAnim.cancel = true; flyAnim = null; flyAnimating = false; }
