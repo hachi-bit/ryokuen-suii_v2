@@ -1,1 +1,8 @@
-
+[
+  { "file": "14116_yokohama-shi_city_2023_izumi-ku_station.geojson", "nameKey": "駅名", "color": "#0ea5e9" },
+  { "file": "14116_yokohama-shi_city_2023_izumi-ku_landmark.geojson", "nameKey": "名称", "color": "#e74c3c" },
+  { "file": "14112_yokohama-shi_city_2023_asahi-ku_station.geojson", "nameKey": "駅名", "color": "#0ea5e9" },
+  { "file": "14112_yokohama-shi_city_2023_asahi-ku_landmark.geojson", "nameKey": "名称", "color": "#e74c3c" },
+  { "file": "14114_yokohama-shi_city_2023_seya-ku_station.geojson", "nameKey": "駅名", "color": "#0ea5e9" },
+  { "file": "14114_yokohama-shi_city_2023_seya-ku_landmark.geojson", "nameKey": "名称", "color": "#e74c3c" }
+]
