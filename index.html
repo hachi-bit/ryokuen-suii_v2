@@ -147,15 +147,22 @@
       position: absolute; bottom: 60px; left: 8px;
       font-size: 10px; color: rgba(255,255,255,0.6);
       background: rgba(0,0,0,0.5); padding: 4px 8px; border-radius: 4px; z-index: 1000;
+      pointer-events: none;
     }
+
+    /* Cesiumのクレジットバーを調整 */
+    .cesium-credit-logoContainer { display: none !important; }
+    .cesium-credit-textContainer { font-size: 10px !important; }
 
     @media (max-width: 768px) {
       #panel { width: 220px; padding: 12px; }
       #panel h1 { font-size: 13px; }
       #sliderBar { padding: 10px 12px 14px; gap: 10px; }
       #sliderBar .slider-value { font-size: 22px; min-width: 70px; }
-      #actionButtons { bottom: 65px; right: 8px; }
+      #actionButtons { bottom: 90px; right: 8px; }
       .action-btn { width: 42px; height: 42px; font-size: 18px; }
+      #credit { display: none; }
+      #walkHint { font-size: 10px; bottom: 90px; }
     }
   </style>
 </head>
@@ -369,6 +376,30 @@
           });
           landmarkEntities.push(entity);
         }
+
+        // ── 建物クリックで属性情報を確認（デバッグ用） ──
+        const debugHandler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+        debugHandler.setInputAction((click) => {
+          if (walkMode) return;
+          const picked = viewer.scene.pick(click.position);
+          if (Cesium.defined(picked) && picked instanceof Cesium.Cesium3DTileFeature) {
+            const names = picked.getPropertyIds();
+            const props = {};
+            names.forEach(name => {
+              props[name] = picked.getProperty(name);
+            });
+            console.log('=== 建物属性 ===', props);
+            // 画面にも表示
+            let text = '【建物属性一覧】\n';
+            names.forEach(name => {
+              text += `${name}: ${picked.getProperty(name)}\n`;
+            });
+            if (names.length === 0) {
+              text += '（属性データなし）';
+            }
+            alert(text);
+          }
+        }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
         // ── 水位スライダー ──
         const slider = document.getElementById('waterSlider');
