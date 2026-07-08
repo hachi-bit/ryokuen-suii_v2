@@ -171,6 +171,7 @@
       <div class="toggle-row"><span>水面を表示</span><label class="toggle-switch"><input type="checkbox" id="waterToggle" checked><span class="toggle-slider"></span></label></div>
       <div class="toggle-row"><span>建物モデルを表示</span><label class="toggle-switch"><input type="checkbox" id="buildingToggle" checked><span class="toggle-slider"></span></label></div>
       <div class="toggle-row"><span>建物の水没着色</span><label class="toggle-switch"><input type="checkbox" id="floodColorToggle" checked><span class="toggle-slider"></span></label></div>
+      <div class="toggle-row"><span>ランドマーク表示</span><label class="toggle-switch"><input type="checkbox" id="landmarkToggle" checked><span class="toggle-slider"></span></label></div>
       <div id="status">読み込み中...</div>
     </div>
   </div>
@@ -237,6 +238,17 @@
       'https://api.plateauview.mlit.go.jp/datacatalog/3dtiles/14116-bldg-lod1-texture-2024/tileset.json',
       'https://api.plateauview.mlit.go.jp/datacatalog/3dtiles/14112-bldg-lod1-texture-2024/tileset.json',
       'https://api.plateauview.mlit.go.jp/datacatalog/3dtiles/14114-bldg-lod2-texture-latest/tileset.json',
+    ];
+
+    // ── ランドマーク（ピン + ラベル） ──
+    // { name: '表示名', lon: 経度, lat: 緯度 } の形式で追加
+    const LANDMARKS = [
+      { name: '緑園都市駅',     lon: 139.5133, lat: 35.4088 },
+      { name: '弥生台駅',       lon: 139.5212, lat: 35.4129 },
+      { name: '緑園東小学校',   lon: 139.5165, lat: 35.4065 },
+      { name: '緑園西小学校',   lon: 139.5077, lat: 35.4056 },
+      { name: '岡津中学校',     lon: 139.5175, lat: 35.4148 },
+      { name: 'フェリス女学院大学', lon: 139.5108, lat: 35.4098 },
     ];
 
     // ============================================================
@@ -325,6 +337,39 @@
           },
         });
 
+        // ── ランドマーク ──
+        const landmarkEntities = [];
+        for (const lm of LANDMARKS) {
+          const entity = viewer.entities.add({
+            position: Cesium.Cartesian3.fromDegrees(lm.lon, lm.lat, 0),
+            billboard: {
+              image: 'data:image/svg+xml,' + encodeURIComponent(
+                '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="36" viewBox="0 0 24 36">' +
+                '<path d="M12 0C5.4 0 0 5.4 0 12c0 9 12 24 12 24s12-15 12-24C24 5.4 18.6 0 12 0z" fill="%23e74c3c"/>' +
+                '<circle cx="12" cy="11" r="5" fill="white"/>' +
+                '</svg>'
+              ),
+              verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+              heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+              scale: 1.0,
+              disableDepthTestDistance: Number.POSITIVE_INFINITY,
+            },
+            label: {
+              text: lm.name,
+              font: 'bold 14px sans-serif',
+              fillColor: Cesium.Color.WHITE,
+              outlineColor: Cesium.Color.BLACK,
+              outlineWidth: 3,
+              style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+              verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+              pixelOffset: new Cesium.Cartesian2(0, -40),
+              heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+              disableDepthTestDistance: Number.POSITIVE_INFINITY,
+            },
+          });
+          landmarkEntities.push(entity);
+        }
+
         // ── 水位スライダー ──
         const slider = document.getElementById('waterSlider');
         const valueDisplay = document.getElementById('waterValue');
@@ -340,6 +385,10 @@
         document.getElementById('waterToggle').addEventListener('change', (e) => { waterEntity.show = e.target.checked; });
         document.getElementById('buildingToggle').addEventListener('change', (e) => { tilesets.forEach(ts => ts.show = e.target.checked); });
         document.getElementById('floodColorToggle').addEventListener('change', (e) => { buildingShader.setUniform('u_colorOn', e.target.checked ? 1.0 : 0.0); });
+
+        document.getElementById('landmarkToggle').addEventListener('change', (e) => {
+          landmarkEntities.forEach(ent => ent.show = e.target.checked);
+        });
 
         const ranges = [100, 200, 300];
         let rangeIndex = 0;
