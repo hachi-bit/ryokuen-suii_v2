@@ -248,21 +248,16 @@
     ];
 
     // ── GeoJSON地物データ ──
-    // index.html と同じ階層に置いたGeoJSONファイル
-    const GEOJSON_FILES = [
-      {
-        url: '14116_yokohama-shi_city_2023_izumi-ku_station.geojson',
-        nameKey: '駅名',       // GeoJSON内の名前プロパティ
-        color: '%230ea5e9',    // 水色（駅）
-        label: '駅',
-      },
-      {
-        url: '14116_yokohama-shi_city_2023_izumi-ku_landmark.geojson',
-        nameKey: '名称',
-        color: '%23e74c3c',    // 赤（ランドマーク）
-        label: 'ランドマーク',
-      },
-    ];
+    // GEO/manifest.json にファイル一覧を記載
+    // 新しいGeoJSONを追加するときは manifest.json に1行足すだけでOK
+    const GEOJSON_DIR = 'GEO/';
+
+    // ピンの色設定（nameKeyのキーワードで自動判定）
+    const PIN_COLORS = {
+      '駅名': '#0ea5e9',    // 水色（駅）
+      '名称': '#e74c3c',    // 赤（ランドマーク等）
+    };
+    const DEFAULT_PIN_COLOR = '#8b5cf6'; // 紫（その他）
 
     // ============================================================
     //  メイン
@@ -353,55 +348,72 @@
         // ── GeoJSONからランドマーク・駅を読み込み ──
         const landmarkEntities = [];
 
-        function makePinSvg(color) {
+        function makePinSvg(hexColor) {
+          // # を %23 に手動変換（encodeURIComponentに任せると二重エンコードになる）
+          const svgColor = hexColor.replace('#', '%23');
           return 'data:image/svg+xml,' + encodeURIComponent(
             '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="36" viewBox="0 0 24 36">' +
-            '<path d="M12 0C5.4 0 0 5.4 0 12c0 9 12 24 12 24s12-15 12-24C24 5.4 18.6 0 12 0z" fill="' + color + '"/>' +
+            '<path d="M12 0C5.4 0 0 5.4 0 12c0 9 12 24 12 24s12-15 12-24C24 5.4 18.6 0 12 0z" fill="' + svgColor + '"/>' +
             '<circle cx="12" cy="11" r="5" fill="white"/>' +
             '</svg>'
-          );
+          ).replace(/%2523/g, '%23'); // 二重エンコード防止
         }
 
-        for (const gj of GEOJSON_FILES) {
-          try {
-            const resp = await fetch(gj.url);
-            if (!resp.ok) { console.warn('GeoJSON読み込み失敗:', gj.url); continue; }
-            const data = await resp.json();
-            const pinImg = makePinSvg(gj.color);
+        try {
+          const manifestResp = await fetch(GEOJSON_DIR + 'manifest.json');
+          if (manifestResp.ok) {
+            const manifest = await manifestResp.json();
 
-            for (const feat of data.features) {
-              const coords = feat.geometry.coordinates;
-              const name = feat.properties[gj.nameKey] || '不明';
+            for (const entry of manifest) {
+              try {
+                const resp = await fetch(GEOJSON_DIR + entry.file);
+                if (!resp.ok) continue;
+                const data = await resp.json();
 
-              const entity = viewer.entities.add({
-                position: Cesium.Cartesian3.fromDegrees(coords[0], coords[1], 0),
-                billboard: {
-                  image: pinImg,
-                  verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-                  heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-                  scale: 0.9,
-                  disableDepthTestDistance: Number.POSITIVE_INFINITY,
-                },
-                label: {
-                  text: name,
-                  font: 'bold 13px sans-serif',
-                  fillColor: Cesium.Color.WHITE,
-                  outlineColor: Cesium.Color.BLACK,
-                  outlineWidth: 3,
-                  style: Cesium.LabelStyle.FILL_AND_OUTLINE,
-                  verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
-                  pixelOffset: new Cesium.Cartesian2(0, -38),
-                  heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
-                  disableDepthTestDistance: Number.POSITIVE_INFINITY,
-                  scaleByDistance: new Cesium.NearFarScalar(500, 1.0, 5000, 0.4),
-                },
-              });
-              landmarkEntities.push(entity);
+                // nameKeyを自動判定（manifest指定 or プロパティから探す）
+                const nameKey = entry.nameKey || Object.keys(data.features[0]?.properties || {}).find(k => k.includes('名') || k.includes('駅')) || '名称';
+                const color = entry.color || PIN_COLORS[nameKey] || DEFAULT_PIN_COLOR;
+                const pinImg = makePinSvg(color);
+
+                for (const feat of data.features) {
+                  if (!feat.geometry || feat.geometry.type !== 'Point') continue;
+                  const coords = feat.geometry.coordinates;
+                  const name = feat.properties[nameKey] || '不明';
+
+                  landmarkEntities.push(viewer.entities.add({
+                    position: Cesium.Cartesian3.fromDegrees(coords[0], coords[1], 0),
+                    billboard: {
+                      image: pinImg,
+                      verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                      heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                      scale: 0.9,
+                      disableDepthTestDistance: Number.POSITIVE_INFINITY,
+                    },
+                    label: {
+                      text: name,
+                      font: 'bold 13px sans-serif',
+                      fillColor: Cesium.Color.WHITE,
+                      outlineColor: Cesium.Color.BLACK,
+                      outlineWidth: 3,
+                      style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+                      verticalOrigin: Cesium.VerticalOrigin.BOTTOM,
+                      pixelOffset: new Cesium.Cartesian2(0, -38),
+                      heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
+                      disableDepthTestDistance: Number.POSITIVE_INFINITY,
+                      scaleByDistance: new Cesium.NearFarScalar(500, 1.0, 5000, 0.4),
+                    },
+                  }));
+                }
+                console.log(`GeoJSON: ${entry.file} → ${data.features.length}件`);
+              } catch (e) {
+                console.warn('GeoJSON読み込みエラー:', entry.file, e.message);
+              }
             }
-            console.log(`${gj.label}: ${data.features.length}件 読み込み完了`);
-          } catch (e) {
-            console.warn('GeoJSON読み込みエラー:', gj.url, e.message);
+          } else {
+            console.log('GEO/manifest.json が見つかりません。ランドマーク表示はスキップします。');
           }
+        } catch (e) {
+          console.log('GeoJSON読み込みスキップ:', e.message);
         }
 
         // ── クリックでランドマーク用の座標をコピー ──
