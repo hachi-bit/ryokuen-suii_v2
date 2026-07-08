@@ -377,28 +377,45 @@
           landmarkEntities.push(entity);
         }
 
-        // ── 建物クリックで属性情報を確認（デバッグ用） ──
+        // ── クリックでランドマーク用の座標をコピー ──
         const debugHandler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
         debugHandler.setInputAction((click) => {
           if (walkMode) return;
+
+          // クリック位置の緯度経度を取得
+          const ray = viewer.camera.getPickRay(click.position);
+          if (!ray) return;
+          const cartesian = viewer.scene.globe.pick(ray, viewer.scene);
+          if (!cartesian) return;
+
+          const carto = Cesium.Cartographic.fromCartesian(cartesian);
+          const lon = Cesium.Math.toDegrees(carto.longitude).toFixed(6);
+          const lat = Cesium.Math.toDegrees(carto.latitude).toFixed(6);
+
+          // 建物の属性も取れたら表示
+          let buildingInfo = '';
           const picked = viewer.scene.pick(click.position);
           if (Cesium.defined(picked) && picked instanceof Cesium.Cesium3DTileFeature) {
-            const names = picked.getPropertyIds();
-            const props = {};
-            names.forEach(name => {
-              props[name] = picked.getProperty(name);
-            });
-            console.log('=== 建物属性 ===', props);
-            // 画面にも表示
-            let text = '【建物属性一覧】\n';
-            names.forEach(name => {
-              text += `${name}: ${picked.getProperty(name)}\n`;
-            });
-            if (names.length === 0) {
-              text += '（属性データなし）';
-            }
-            alert(text);
+            const height = picked.getProperty('bldg:measuredHeight');
+            const city = picked.getProperty('uro:BuildingIDAttribute_uro:city');
+            if (height) buildingInfo += `\n建物高さ: ${height}m`;
+            if (city) buildingInfo += `\n所在: ${city}`;
           }
+
+          // ランドマーク用のコードを生成
+          const code = `{ name: 'ここに名前', lon: ${lon}, lat: ${lat} },`;
+
+          // コピー
+          navigator.clipboard.writeText(code).then(() => {
+            console.log('コピー済み:', code);
+          });
+
+          // 画面に表示
+          alert(
+            `📍 座標をコピーしました！\n\n` +
+            `経度: ${lon}\n緯度: ${lat}${buildingInfo}\n\n` +
+            `【コピー済み（LANDMARKSに貼り付けてね）】\n${code}`
+          );
         }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
 
         // ── 水位スライダー ──
