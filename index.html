@@ -264,11 +264,10 @@
     // ============================================================
     //  設定
     // ============================================================
-    const PLATEAU_ION_TOKEN =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.' +
-      'eyJqdGkiOiJlNjk0MTM4NC1lMWI0LTQxNTgtYjcxZS01ZWJhMGJlMTE1MWQiLCJpZCI6MTQ5ODk3LCJpYXQiOjE3MTUxNTEyODZ9.' +
-      '2aUmEQ2-fDsjf-XeC6-hZpwkgwLse3yXoXF4xTOvPAY';
-    const TERRAIN_ASSET_ID = 2488101;
+    // 地形データ（PLATEAU-Terrain）の配信URL。以前はCesium ionの共有トークン経由で
+    // 取得していたが、トークンが失効(401)したため、Cesium ion不要・認証不要の
+    // PLATEAU公式タイル配信サービスに切り替えた。
+    const TERRAIN_URL = "https://tile.plateauview.mlit.go.jp/terrain";
 
     const INITIAL_CAMERA = {
       lon: 139.518853, lat: 35.431628, height: 500.1,
@@ -304,7 +303,6 @@
     // ============================================================
     //  メイン
     // ============================================================
-    Cesium.Ion.defaultAccessToken = PLATEAU_ION_TOKEN;
     const statusEl = document.getElementById('status');
     function setStatus(html) { statusEl.innerHTML = html; }
     let currentWaterLevel = DEFAULT_WATER_LEVEL + GEOID_HEIGHT;
@@ -312,9 +310,16 @@
     (async () => {
       try {
         setStatus('Viewerを初期化中...');
+        let terrainProvider;
+        try {
+          terrainProvider = await Cesium.CesiumTerrainProvider.fromUrl(TERRAIN_URL, { requestVertexNormals: true });
+        } catch (e) {
+          console.warn('地形データの読み込みに失敗。平坦な地形で続行します:', e);
+          terrainProvider = new Cesium.EllipsoidTerrainProvider();
+        }
         const viewer = new Cesium.Viewer('cesiumContainer', {
           baseLayer: false,
-          terrainProvider: await Cesium.CesiumTerrainProvider.fromIonAssetId(TERRAIN_ASSET_ID),
+          terrainProvider,
           animation: false, timeline: false, homeButton: false, geocoder: false,
           sceneModePicker: false, baseLayerPicker: false, navigationHelpButton: false,
           fullscreenButton: false, selectionIndicator: false, infoBox: false,
